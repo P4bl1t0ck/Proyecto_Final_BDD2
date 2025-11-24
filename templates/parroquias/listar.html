@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Parroquias{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-church"></i> Parroquias Registradas</h1>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar parroquia por nombre, dirección o vicaría..." onkeyup="filtrarTabla()">
+    <i class="fas fa-search"></i>
+</div>
+
+{% if parroquias %}
+<div class="table-container">
+    <table class="data-table" id="tablaParroquias">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Vicaría</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parroquia in parroquias %}
+            <tr>
+                <td>{{ parroquia.ID_Parroquin }}</td>
+                <td>{{ parroquia.Nombre }}</td>
+                <td>{{ parroquia.Direccion }}</td>
+                <td>{{ parroquia.Telefono }}</td>
+                <td>{{ parroquia.Vicaria }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="info-box">
+    <i class="fas fa-info-circle"></i>
+    Total de parroquias registradas: <strong>{{ parroquias|length }}</strong>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-church"></i>
+    <h3>No hay parroquias registradas</h3>
+    <p>No se encontraron parroquias en el sistema</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-home"></i> Volver al Inicio
+    </a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarTabla() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('tablaParroquias');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName('td');
+        let encontrado = false;
+        
+        for (let j = 0; j < td.length; j++) {
+            if (td[j]) {
+                const txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+        
+        tr[i].style.display = encontrado ? '' : 'none';
+    }
+}
+</script>
+{% endblock %}

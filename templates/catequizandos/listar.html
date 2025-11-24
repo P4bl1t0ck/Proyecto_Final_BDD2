@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Catequizandos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-users"></i> Catequizandos Registrados</h1>
+    <a href="{{ url_for('nuevo_catequizando') }}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Registrar Nuevo
+    </a>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar catequizando por nombre, apellido o cédula..." onkeyup="filtrarTabla()">
+    <i class="fas fa-search"></i>
+</div>
+
+{% if catequizandos %}
+<div class="table-container">
+    <table class="data-table" id="tablaCatequizandos">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Cédula</th>
+                <th>Fecha Nacimiento</th>
+                <th>Teléfono</th>
+                <th>Fe de Bautismo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for catequizando in catequizandos %}
+            <tr>
+                <td>{{ catequizando.ID_Catequizando }}</td>
+                <td>{{ catequizando.Nombre }} {{ catequizando.Apellido }}</td>
+                <td>{{ catequizando.Cedula }}</td>
+                <td>{{ catequizando.Fecha_Nacimiento.strftime('%d/%m/%Y') if catequizando.Fecha_Nacimiento else 'N/A' }}</td>
+                <td>{{ catequizando.Telefono }}</td>
+                <td>{{ catequizando.FeBautismo_ID_Bautismo }}</td>
+                <td class="action-buttons">
+                    <a href="{{ url_for('editar_catequizando', id=catequizando.ID_Catequizando) }}" class="btn btn-sm btn-primary" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <button onclick="confirmarEliminacion('{{ catequizando.ID_Catequizando }}', '{{ catequizando.Nombre }} {{ catequizando.Apellido }}')" 
+                            class="btn btn-sm btn-danger" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="info-box">
+    <i class="fas fa-info-circle"></i>
+    Total de catequizandos registrados: <strong>{{ catequizandos|length }}</strong>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-user-plus"></i>
+    <h3>No hay catequizandos registrados</h3>
+    <p>Comienza registrando tu primer catequizando</p>
+    <a href="{{ url_for('nuevo_catequizando') }}" class="btn btn-success">
+        <i class="fas fa-plus"></i> Registrar Catequizando
+    </a>
+</div>
+{% endif %}
+
+<!-- Modal de confirmación de eliminación -->
+<div id="modalEliminar" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h2>
+        <p>¿Está seguro de eliminar al catequizando <strong id="nombreEliminar"></strong>?</p>
+        <p class="warning-text">Esta acción no se puede deshacer.</p>
+        <form id="formEliminar" method="POST" action="">
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarTabla() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('tablaCatequizandos');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName('td');
+        let encontrado = false;
+        
+        for (let j = 0; j < td.length - 1; j++) {
+            if (td[j]) {
+                const txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+        
+        tr[i].style.display = encontrado ? '' : 'none';
+    }
+}
+
+function confirmarEliminacion(id, nombre) {
+    document.getElementById('nombreEliminar').textContent = nombre;
+    document.getElementById('formEliminar').action = `/catequizandos/eliminar/${id}`;
+    document.getElementById('modalEliminar').style.display = 'block';
+}
+
+function cerrarModal() {
+    document.getElementById('modalEliminar').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera de él
+window.onclick = function(event) {
+    const modal = document.getElementById('modalEliminar');
+    if (event.target == modal) {
+        cerrarModal();
+    }
+}
+</script>
+{% endblock %}

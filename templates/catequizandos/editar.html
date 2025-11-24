@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Catequizando{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-user-edit"></i> Editar Catequizando</h1>
+    <a href="{{ url_for('listar_catequizandos') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('editar_catequizando', id=catequizando.ID_Catequizando) }}" class="catequesis-form">
+        <div class="form-section">
+            <h3><i class="fas fa-info-circle"></i> Información Básica (No Editable)</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-hashtag"></i> ID Catequizando</label>
+                    <input type="text" value="{{ catequizando.ID_Catequizando }}" disabled class="disabled-input">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-id-badge"></i> Cédula</label>
+                    <input type="text" value="{{ catequizando.Cedula }}" disabled class="disabled-input">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nombre Completo</label>
+                    <input type="text" value="{{ catequizando.Nombre }} {{ catequizando.Apellido }}" disabled class="disabled-input">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Fecha de Nacimiento</label>
+                    <input type="text" 
+                           value="{{ catequizando.Fecha_Nacimiento.strftime('%d/%m/%Y') if catequizando.Fecha_Nacimiento else 'N/A' }}" 
+                           disabled 
+                           class="disabled-input">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-cross"></i> Fe de Bautismo</label>
+                <input type="text" value="{{ catequizando.FeBautismo_ID_Bautismo }}" disabled class="disabled-input">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3><i class="fas fa-edit"></i> Información Editable</h3>
+            
+            <div class="form-group">
+                <label for="telefono">
+                    <i class="fas fa-phone"></i> Teléfono *
+                </label>
+                <input type="tel" 
+                       id="telefono" 
+                       name="telefono" 
+                       value="{{ catequizando.Telefono }}"
+                       required 
+                       pattern="[0-9]{10}"
+                       placeholder="0987654321">
+                <small>10 dígitos numéricos</small>
+            </div>
+
+            <div class="form-group">
+                <label for="observaciones">
+                    <i class="fas fa-comment"></i> Observaciones
+                </label>
+                <textarea id="observaciones" 
+                          name="observaciones" 
+                          rows="4" 
+                          placeholder="Ingrese observaciones adicionales">{{ catequizando.Observaciones or '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+            <a href="{{ url_for('listar_catequizandos') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="info-box">
+    <i class="fas fa-info-circle"></i>
+    Solo se puede editar el teléfono y las observaciones. 
+    Los datos personales básicos no pueden ser modificados.
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación en tiempo real de teléfono
+    const telefonoInput = document.getElementById('telefono');
+    telefonoInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes y Estadísticas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-chart-bar"></i> Reportes y Estadísticas</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #4CAF50;">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ stats.total_catequizandos }}</h3>
+            <p>Catequizandos</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #2196F3;">
+            <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ stats.total_catequistas }}</h3>
+            <p>Catequistas</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #FF9800;">
+            <i class="fas fa-church"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ stats.total_parroquias }}</h3>
+            <p>Parroquias</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #9C27B0;">
+            <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ stats.total_inscripciones }}</h3>
+            <p>Inscripciones</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-money-bill-wave"></i> Estado de Pagos</h3>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Cantidad</th>
+                    <th>Porcentaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estado in stats.estados_pago %}
+                <tr>
+                    <td>
+                        <span class="badge {{ 'badge-success' if estado.estado == 'Pagado' else 'badge-warning' }}">
+                            {{ estado.estado }}
+                        </span>
+                    </td>
+                    <td>{{ estado.cantidad }}</td>
+                    <td>
+                        {% set porcentaje = (estado.cantidad / stats.total_inscripciones * 100) | round(1) %}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ porcentaje }}%">
+                                {{ porcentaje }}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="actions-section">
+    <h3><i class="fas fa-file-download"></i> Acciones</h3>
+    <div class="button-group">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Reporte
+        </button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Catequizando{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-user-plus"></i> Registrar Nuevo Catequizando</h1>
+    <a href="{{ url_for('listar_catequizandos') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('nuevo_catequizando') }}" class="catequesis-form" id="formNuevo">
+        <div class="form-section">
+            <h3><i class="fas fa-id-card"></i> Información Personal</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_catequizando">
+                        <i class="fas fa-hashtag"></i> ID Catequizando *
+                    </label>
+                    <input type="text" 
+                           id="id_catequizando" 
+                           name="id_catequizando" 
+                           maxlength="15" 
+                           required 
+                           placeholder="Ej: CZO011">
+                    <small>Máximo 15 caracteres</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cedula">
+                        <i class="fas fa-id-badge"></i> Cédula *
+                    </label>
+                    <input type="text" 
+                           id="cedula" 
+                           name="cedula" 
+                           maxlength="10" 
+                           required 
+                           pattern="[0-9]{10}"
+                           placeholder="1234567890">
+                    <small>10 dígitos numéricos</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">
+                        <i class="fas fa-user"></i> Nombre *
+                    </label>
+                    <input type="text" 
+                           id="nombre" 
+                           name="nombre" 
+                           required 
+                           placeholder="Nombre del catequizando">
+                </div>
+
+                <div class="form-group">
+                    <label for="apellido">
+                        <i class="fas fa-user"></i> Apellido *
+                    </label>
+                    <input type="text" 
+                           id="apellido" 
+                           name="apellido" 
+                           required 
+                           placeholder="Apellido del catequizando">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_nacimiento">
+                        <i class="fas fa-calendar"></i> Fecha de Nacimiento *
+                    </label>
+                    <input type="date" 
+                           id="fecha_nacimiento" 
+                           name="fecha_nacimiento" 
+                           required
+                           max="{{ today }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">
+                        <i class="fas fa-phone"></i> Teléfono *
+                    </label>
+                    <input type="tel" 
+                           id="telefono" 
+                           name="telefono" 
+                           required 
+                           pattern="[0-9]{10}"
+                           placeholder="0987654321">
+                    <small>10 dígitos numéricos</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3><i class="fas fa-certificate"></i> Información de Bautismo</h3>
+            
+            <div class="form-group">
+                <label for="id_bautismo">
+                    <i class="fas fa-cross"></i> Fe de Bautismo *
+                </label>
+                <select id="id_bautismo" name="id_bautismo" required>
+                    <option value="">Seleccione una Fe de Bautismo</option>
+                    {% for fb in febautismos %}
+                    <option value="{{ fb.ID_Bautismo }}">
+                        {{ fb.ID_Bautismo }} - {{ fb.ParroquiaBautizo }} 
+                        ({{ fb.FechaBautismo.strftime('%d/%m/%Y') if fb.FechaBautismo else 'Sin fecha' }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="observaciones">
+                    <i class="fas fa-comment"></i> Observaciones
+                </label>
+                <textarea id="observaciones" 
+                          name="observaciones" 
+                          rows="4" 
+                          placeholder="Ingrese observaciones adicionales (opcional)"></textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Registrar Catequizando
+            </button>
+            <a href="{{ url_for('listar_catequizandos') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="help-box">
+    <h4><i class="fas fa-question-circle"></i> Ayuda</h4>
+    <ul>
+        <li>Todos los campos marcados con (*) son obligatorios</li>
+        <li>El ID debe ser único para cada catequizando</li>
+        <li>La cédula debe tener exactamente 10 dígitos</li>
+        <li>Debe seleccionar una Fe de Bautismo existente</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Establecer fecha máxima como hoy
+    const fechaNacimiento = document.getElementById('fecha_nacimiento');
+    const today = new Date().toISOString().split('T')[0];
+    fechaNacimiento.max = today;
+
+    // Validación en tiempo real de cédula
+    const cedulaInput = document.getElementById('cedula');
+    cedulaInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    // Validación en tiempo real de teléfono
+    const telefonoInput = document.getElementById('telefono');
+    telefonoInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    // Validación del formulario
+    const form = document.getElementById('formNuevo');
+    form.addEventListener('submit', function(e) {
+        const cedula = cedulaInput.value;
+        const telefono = telefonoInput.value;
+
+        if (cedula.length !== 10) {
+            e.preventDefault();
+            alert('La cédula debe tener exactamente 10 dígitos');
+            cedulaInput.focus();
+            return false;
+        }
+
+        if (telefono.length !== 10) {
+            e.preventDefault();
+            alert('El teléfono debe tener exactamente 10 dígitos');
+            telefonoInput.focus();
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

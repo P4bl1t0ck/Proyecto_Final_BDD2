@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Catequistas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-chalkboard-teacher"></i> Catequistas Registrados</h1>
+</div>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar catequista por nombre, apellido o rol..." onkeyup="filtrarTabla()">
+    <i class="fas fa-search"></i>
+</div>
+
+{% if catequistas %}
+<div class="table-container">
+    <table class="data-table" id="tablaCatequistas">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Parroquia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for catequista in catequistas %}
+            <tr>
+                <td>{{ catequista.ID_Catequista }}</td>
+                <td>{{ catequista.Nombres }} {{ catequista.Apellidos }}</td>
+                <td>{{ catequista.Telefono }}</td>
+                <td>{{ catequista.Correo }}</td>
+                <td>
+                    <span class="badge {{ 'badge-success' if catequista.Rol == 'Coordinador' or catequista.Rol == 'Coordinadora' else 'badge-primary' }}">
+                        {{ catequista.Rol }}
+                    </span>
+                </td>
+                <td>{{ catequista.Parroquia_ID_Parroquin }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="info-box">
+    <i class="fas fa-info-circle"></i>
+    Total de catequistas registrados: <strong>{{ catequistas|length }}</strong>
+</div>
+{% else %}
+<div class="empty-state">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <h3>No hay catequistas registrados</h3>
+    <p>No se encontraron catequistas en el sistema</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-home"></i> Volver al Inicio
+    </a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarTabla() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById('tablaCatequistas');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+        const td = tr[i].getElementsByTagName('td');
+        let encontrado = false;
+        
+        for (let j = 0; j < td.length; j++) {
+            if (td[j]) {
+                const txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+        
+        tr[i].style.display = encontrado ? '' : 'none';
+    }
+}
+</script>
+{% endblock %}

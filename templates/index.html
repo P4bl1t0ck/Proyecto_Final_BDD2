@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Sistema de Catequesis{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1><i class="fas fa-cross"></i> Bienvenido al Sistema de Catequesis</h1>
+    <p class="hero-subtitle">Gestión integral de catequizandos, catequistas y actividades parroquiales</p>
+</div>
+
+<div class="cards-grid">
+    <div class="card">
+        <div class="card-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3>Catequizandos</h3>
+        <p>Registra y gestiona la información de los catequizandos</p>
+        <div class="card-actions">
+            <a href="{{ url_for('listar_catequizandos') }}" class="btn btn-primary">
+                <i class="fas fa-list"></i> Ver Lista
+            </a>
+            <a href="{{ url_for('nuevo_catequizando') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Registrar Nuevo
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-icon">
+            <i class="fas fa-church"></i>
+        </div>
+        <h3>Parroquias</h3>
+        <p>Administra las parroquias y sus datos de contacto</p>
+        <div class="card-actions">
+            <a href="{{ url_for('listar_parroquias') }}" class="btn btn-primary">
+                <i class="fas fa-list"></i> Ver Parroquias
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-icon">
+            <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <h3>Catequistas</h3>
+        <p>Gestiona los catequistas y sus asignaciones</p>
+        <div class="card-actions">
+            <a href="{{ url_for('listar_catequistas') }}" class="btn btn-primary">
+                <i class="fas fa-list"></i> Ver Catequistas
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-icon">
+            <i class="fas fa-chart-bar"></i>
+        </div>
+        <h3>Reportes</h3>
+        <p>Visualiza estadísticas y genera reportes</p>
+        <div class="card-actions">
+            <a href="{{ url_for('reportes') }}" class="btn btn-primary">
+                <i class="fas fa-eye"></i> Ver Reportes
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="info-section">
+    <h2><i class="fas fa-info-circle"></i> Acerca del Sistema</h2>
+    <div class="info-content">
+        <p>Este sistema permite gestionar de manera eficiente todos los aspectos relacionados con la catequesis parroquial:</p>
+        <ul class="feature-list">
+            <li><i class="fas fa-check"></i> Registro completo de catequizandos</li>
+            <li><i class="fas fa-check"></i> Control de inscripciones y pagos</li>
+            <li><i class="fas fa-check"></i> Gestión de catequistas y grupos</li>
+            <li><i class="fas fa-check"></i> Emisión de certificados</li>
+            <li><i class="fas fa-check"></i> Reportes y estadísticas en tiempo real</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
