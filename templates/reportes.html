@@ -61,24 +61,40 @@
                 </tr>
             </thead>
             <tbody>
-                {% for estado in stats.estados_pago %}
-                <tr>
-                    <td>
-                        <span class="badge {{ 'badge-success' if estado.estado == 'Pagado' else 'badge-warning' }}">
-                            {{ estado.estado }}
-                        </span>
-                    </td>
-                    <td>{{ estado.cantidad }}</td>
-                    <td>
-                        {% set porcentaje = (estado.cantidad / stats.total_inscripciones * 100) | round(1) %}
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ porcentaje }}%">
-                                {{ porcentaje }}%
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% if stats.estados_pago %}
+                    {% for estado in stats.estados_pago %}
+                    <tr>
+                        <td>
+                            <span class="badge {{ 'badge-success' if estado.estado == 'Pagado' else 'badge-warning' }}">
+                                {{ estado.estado }}
+                            </span>
+                        </td>
+                        <td>{{ estado.cantidad }}</td>
+                        <td>
+                            {% if stats.total_inscripciones > 0 %}
+                                {% set porcentaje = (estado.cantidad / stats.total_inscripciones * 100) | round(1) %}
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ porcentaje }}%">
+                                        {{ porcentaje }}%
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%">
+                                        0%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                            <i class="fas fa-info-circle"></i> No hay datos de pagos disponibles
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>

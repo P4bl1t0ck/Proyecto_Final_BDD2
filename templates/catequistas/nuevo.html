@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Catequista - Sistema de Catequesis{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-chalkboard-teacher"></i> Registrar Nuevo Catequista</h1>
+    <a href="{{ url_for('listar_catequistas') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="form-container">
+    <form method="POST" class="catequesis-form" onsubmit="return validarFormulario('formCatequista')">
+        
+        <div class="form-section">
+            <h3><i class="fas fa-user"></i> Información Personal</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_catequista">
+                        <i class="fas fa-id-card"></i> ID del Catequista *
+                    </label>
+                    <input type="text" id="id_catequista" name="id_catequista" required 
+                           maxlength="15" placeholder="Ej: CAT-001">
+                    <small>Identificador único del catequista</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombres">
+                        <i class="fas fa-user"></i> Nombres *
+                    </label>
+                    <input type="text" id="nombres" name="nombres" required 
+                           maxlength="20" placeholder="Nombres del catequista">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="apellidos">
+                        <i class="fas fa-user"></i> Apellidos *
+                    </label>
+                    <input type="text" id="apellidos" name="apellidos" required 
+                           maxlength="20" placeholder="Apellidos del catequista">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">
+                        <i class="fas fa-phone"></i> Teléfono
+                    </label>
+                    <input type="tel" id="telefono" name="telefono" 
+                           maxlength="13" placeholder="Ej: 0999999999"
+                           oninput="validarTelefono(this)">
+                    <small>Solo números, máximo 13 dígitos</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3><i class="fas fa-briefcase"></i> Información Profesional</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="correo">
+                        <i class="fas fa-envelope"></i> Correo Electrónico
+                    </label>
+                    <input type="email" id="correo" name="correo" 
+                           maxlength="100" placeholder="correo@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="rol">
+                        <i class="fas fa-user-tag"></i> Rol *
+                    </label>
+                    <select id="rol" name="rol" required>
+                        <option value="">Seleccione un rol</option>
+                        <option value="Catequista Principal">Catequista Principal</option>
+                        <option value="Catequista Auxiliar">Catequista Auxiliar</option>
+                        <option value="Coordinador">Coordinador</option>
+                        <option value="Colaborador">Colaborador</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_parroquia">
+                        <i class="fas fa-church"></i> Parroquia *
+                    </label>
+                    <select id="id_parroquia" name="id_parroquia" required>
+                        <option value="">Seleccione una parroquia</option>
+                        {% for parroquia in parroquias %}
+                        <option value="{{ parroquia.ID_Parroquin }}">{{ parroquia.Nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Registrar Catequista
+            </button>
+            <a href="{{ url_for('listar_catequistas') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="help-box">
+    <h4><i class="fas fa-info-circle"></i> Ayuda</h4>
+    <ul>
+        <li>Los campos marcados con * son obligatorios</li>
+        <li>El ID del catequista debe ser único en el sistema</li>
+        <li>El teléfono solo acepta números</li>
+        <li>Asegúrese de seleccionar la parroquia correcta</li>
+    </ul>
+</div>
+{% endblock %}

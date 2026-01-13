@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Parroquia - Sistema de Catequesis{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-church"></i> Registrar Nueva Parroquia</h1>
+    <a href="{{ url_for('listar_parroquias') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="form-container">
+    <form method="POST" class="catequesis-form" onsubmit="return validarFormulario('formParroquia')">
+        
+        <div class="form-section">
+            <h3><i class="fas fa-church"></i> Información de la Parroquia</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_parroquin">
+                        <i class="fas fa-id-card"></i> ID de la Parroquia *
+                    </label>
+                    <input type="text" id="id_parroquin" name="id_parroquin" required 
+                           maxlength="15" placeholder="Ej: PAR-001">
+                    <small>Identificador único de la parroquia</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre">
+                        <i class="fas fa-church"></i> Nombre *
+                    </label>
+                    <input type="text" id="nombre" name="nombre" required 
+                           maxlength="20" placeholder="Nombre de la parroquia">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="direccion">
+                        <i class="fas fa-map-marker-alt"></i> Dirección
+                    </label>
+                    <input type="text" id="direccion" name="direccion" 
+                           maxlength="25" placeholder="Dirección de la parroquia">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">
+                        <i class="fas fa-phone"></i> Teléfono
+                    </label>
+                    <input type="tel" id="telefono" name="telefono" 
+                           maxlength="13" placeholder="Ej: 0999999999"
+                           oninput="validarTelefono(this)">
+                    <small>Solo números, máximo 13 dígitos</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vicaria">
+                        <i class="fas fa-cross"></i> Vicaría
+                    </label>
+                    <input type="text" id="vicaria" name="vicaria" 
+                           maxlength="100" placeholder="Nombre de la vicaría">
+                    <small>Vicaría a la que pertenece la parroquia</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save"></i> Registrar Parroquia
+            </button>
+            <a href="{{ url_for('listar_parroquias') }}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="help-box">
+    <h4><i class="fas fa-info-circle"></i> Ayuda</h4>
+    <ul>
+        <li>Los campos marcados con * son obligatorios</li>
+        <li>El ID de la parroquia debe ser único en el sistema</li>
+        <li>El teléfono solo acepta números</li>
+        <li>Puede dejar campos opcionales vacíos si no dispone de la información</li>
+    </ul>
+</div>
+{% endblock %}

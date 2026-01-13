@@ -2,8 +2,9 @@
  * Sistema de Gestión de Catequesis - JavaScript
  */
 
-// Cerrar alertas automáticamente después de 5 segundos
+// Inicialización del sistema cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', function() {
+    // Cerrar alertas automáticamente después de 5 segundos
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -13,7 +14,57 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }, 5000);
     });
+
+    // Menú de navegación responsive (toggle hamburguesa)
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            
+            // Cambiar icono de hamburguesa a X
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        const navLinks = navMenu.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+                const icon = navToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+    }
+
+    // Marcar pestaña activa en el menú
+    highlightActiveTab();
 });
+
+// Función para resaltar la pestaña activa
+function highlightActiveTab() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-menu .nav-link');
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        const linkPath = new URL(link.href).pathname;
+        
+        if (currentPath === linkPath || 
+            (currentPath !== '/' && linkPath !== '/' && currentPath.startsWith(linkPath))) {
+            link.classList.add('active');
+        }
+    });
+}
 
 // Animación de fadeOut para alertas
 const style = document.createElement('style');

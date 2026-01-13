@@ -50,8 +50,9 @@ def listar_catequizandos():
         return render_template('catequizandos/listar.html', catequizandos=catequizandos_list)
     
     except Exception as e:
+        print(f'Error en listar_catequizandos: {str(e)}')
         flash(f'Error al consultar catequizandos: {str(e)}', 'error')
-        return redirect(url_for('index'))
+        return render_template('catequizandos/listar.html', catequizandos=[])
 
 
 @app.route('/catequizandos/nuevo', methods=['GET', 'POST'])
@@ -195,8 +196,37 @@ def listar_parroquias():
         return render_template('parroquias/listar.html', parroquias=parroquias_list)
     
     except Exception as e:
+        print(f'Error en listar_parroquias: {str(e)}')
         flash(f'Error al consultar parroquias: {str(e)}', 'error')
-        return redirect(url_for('index'))
+        return render_template('parroquias/listar.html', parroquias=[])
+
+
+@app.route('/parroquias/nuevo', methods=['GET', 'POST'])
+def nueva_parroquia():
+    """Formulario para crear nueva parroquia"""
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            id_parroquin = request.form['id_parroquin']
+            nombre = request.form['nombre']
+            direccion = request.form['direccion']
+            telefono = request.form['telefono']
+            vicaria = request.form['vicaria']
+            
+            # Insertar en la base de datos
+            with db_config.get_cursor() as cursor:
+                cursor.execute(
+                    "{CALL sp_InsertarParroquia(?, ?, ?, ?, ?)}",
+                    (id_parroquin, nombre, direccion, telefono, vicaria)
+                )
+            
+            flash('Parroquia registrada exitosamente', 'success')
+            return redirect(url_for('listar_parroquias'))
+        
+        except Exception as e:
+            flash(f'Error al registrar parroquia: {str(e)}', 'error')
+    
+    return render_template('parroquias/nuevo.html')
 
 
 @app.route('/catequistas')
@@ -223,8 +253,54 @@ def listar_catequistas():
         return render_template('catequistas/listar.html', catequistas=catequistas_list)
     
     except Exception as e:
+        print(f'Error en listar_catequistas: {str(e)}')
         flash(f'Error al consultar catequistas: {str(e)}', 'error')
-        return redirect(url_for('index'))
+        return render_template('catequistas/listar.html', catequistas=[])
+
+
+@app.route('/catequistas/nuevo', methods=['GET', 'POST'])
+def nuevo_catequista():
+    """Formulario para crear nuevo catequista"""
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            id_catequista = request.form['id_catequista']
+            nombres = request.form['nombres']
+            apellidos = request.form['apellidos']
+            telefono = request.form['telefono']
+            correo = request.form['correo']
+            rol = request.form['rol']
+            id_parroquia = request.form['id_parroquia']
+            
+            # Insertar en la base de datos
+            with db_config.get_cursor() as cursor:
+                cursor.execute(
+                    "{CALL sp_InsertarCatequista(?, ?, ?, ?, ?, ?, ?)}",
+                    (id_catequista, nombres, apellidos, telefono, correo, rol, id_parroquia)
+                )
+            
+            flash('Catequista registrado exitosamente', 'success')
+            return redirect(url_for('listar_catequistas'))
+        
+        except Exception as e:
+            flash(f'Error al registrar catequista: {str(e)}', 'error')
+    
+    # Obtener lista de Parroquias para el formulario
+    try:
+        with db_config.get_cursor() as cursor:
+            cursor.execute("{CALL sp_ConsultarParroquias}")
+            parroquias = cursor.fetchall()
+            
+            parroquias_list = []
+            for row in parroquias:
+                parroquias_list.append({
+                    'ID_Parroquin': row.ID_Parroquin,
+                    'Nombre': row.Nombre
+                })
+    except Exception:
+        parroquias_list = []
+    
+    return render_template('catequistas/nuevo.html', parroquias=parroquias_list)
 
 
 @app.route('/reportes')
@@ -268,8 +344,16 @@ def reportes():
         return render_template('reportes.html', stats=stats)
     
     except Exception as e:
+        print(f'Error en reportes: {str(e)}')
         flash(f'Error al generar reportes: {str(e)}', 'error')
-        return redirect(url_for('index'))
+        stats = {
+            'total_catequizandos': 0,
+            'total_catequistas': 0,
+            'total_parroquias': 0,
+            'total_inscripciones': 0,
+            'estados_pago': []
+        }
+        return render_template('reportes.html', stats=stats)
 
 
 # =============================================
